@@ -1,6 +1,6 @@
 ## Portalbeanz Git flow
 
-Flow tham khảo: http://nvie.com/posts/a-successful-git-branching-model/
+Flow tham khảo: [Nguồn](http://nvie.com/posts/a-successful-git-branching-model/)
 
 ### Giả định
 * Đã tạo PBVN Repository (Nguồn trung tâm) trên Bitbucket（hiện tại công ty đang dùng bitbucket）。
@@ -18,58 +18,70 @@ Flow tham khảo: http://nvie.com/posts/a-successful-git-branching-model/
     1. Trên Github (Bitbucket), fork PBVN Repository về tài khoản của mình（repository ở tài khoản của mình sẽ được gọi là Forked Repository）。
 
     2. Clone (tạo bản sao) Forked Repository ở môi trường local。Tại thời điểm này, Forked Repository sẽ được tự động đăng ký dưới tên là `origin`。
-        $ git clone [URL của Forked Repository]
-
+        ```sh $ git clone [URL của Forked Repository] ```
     3. Truy cập vào thư mục đã được tạo ra sau khi clone, đăng ký PBVN Repository dưới tên `upstream`。
-        $ cd [thư mục được tạo ra]
-        $ git remote add upstream [URL của PBVN Repository]
-
-  ### Lưu ý:
-    Nếu được thao tác trực tiếp trên Repository thì origin ~ upstream
+        ```sh
+            $ cd [thư mục được tạo ra]
+            $ git remote add upstream [URL của PBVN Repository]
+        ```
+### Lưu ý:
+    || Nếu được thao tác trực tiếp trên Repository thì origin ~ upstream
 ### Quy trình
 
 Từ đây, PBVN Repository và Forked Repository sẽ được gọi lần lượt là `upstream` và `origin`。
      ### Lưu ý:
         Nếu được thao tác trực tiếp trên Repository thì origin ~ upstream
 1. Đồng bộ hóa branch master tại local với upstream。
+    ```sh
     $ git checkout master
     $ git pull upstream master
-
+    ```
 2. Tạo branch để làm task từ branch master ở local. Tên branch là số ticket của task（Ví dụ: `task/1234`）。
+    ```sh
     $ git checkout master # <--- Không cần thiết nếu đang ở trên branch master
     $ git checkout -b task/1234
-
+    ```
 3. Tiến hành làm task（Có thể commit bao nhiêu tùy ý）。
    *** có thể  bỏ qua bước 4 nếu được phép có nhiều commit.
-4. Trường hợp đã tạo nhiều commit trong quá trình làm task trước khi push phải dùng rebase -i để hợp các commit lại thành 1 commit duy nhất。
+4. Trường hợp đã tạo nhiều commit trong quá trình làm task trước khi push phải dùng rebase -i để hợp các commit lại thành 1 commit duy nhất。 
+    ```sh
     $ git rebase -i [mã hash của commit trước commit đầu tiên trong quá trình làm task]
-        =>  pick 07c5abd Init
-            pick fe7b2ab test1
-            pick de9b1eb test2
-    4.1   thay "s" (squard) vào "pick" từ commit thứ 2 trở xuống.
-        =>
-            pick 07c5abd Init
-            s fe7b2ab test1
-            s de9b1eb test2
+    ```  
+            pick 07c5abd Init  
+            pick fe7b2ab test1  
+            pick de9b1eb test2  
+        
+    4.1   thay "s" (squard) vào "pick" từ commit thứ 2 trở xuống.  
 
-    4.2 nó sẽ hiện lại commit message ở edittor kiểu như này
-        # This is the 2nd commit message:
+            pick 07c5abd Init  
+            s fe7b2ab test1  
+            s de9b1eb test2  
+
+    4.2 nó sẽ hiện lại commit message ở edittor kiểu như này  
+
+        # This is the 2nd commit message:  
         test1
         # The 3rd commit message will be skipped:
-        test2
-        => ta có thể bỏ hết mesage đi bằng # vào đầu dòng hoặc xoá đi
-        thêm commit của mình vào => save và thoát edittor
+        test2`  
+        => ta có thể bỏ hết mesage đi bằng # vào đầu dòng hoặc xoá đi  
+            thêm commit của mình vào => save và thoát edittor
 
-5. Quay trở về branch master ở local và lấy code mới nhất về
-    $ git checkout master
-    $ git pull upstream master
+5. Quay trở về branch master ở local và lấy code mới nhất về  
+    ```sh
+        $ git checkout master
+        $ git pull upstream master
+    ```
 6. Quay trở lại branch làm task, sau đó rebase với branch master。
+    ```sh
     $ git checkout task/1234
     $ git rebase master hoặc $ git merge master --no-ff
+    ```
     **Trường hợp xảy ra conflict trong quá trình rebase hoặc merge、=> ngồi mà fix, gọi thêm ng cùng làm task trước đó.
 
 7. Push code lên origin。
+    ```sh
     $ git push origin task/1234
+    ```
 8. Tại origin trên Github（Bitbucket）、từ branch `task/1234` đã được push lên hãy gửi pull-request đối với branch master của upstream.
 
 9. Hãy gửi link URL của trang pull-request cho reviewer để tiến hành review code。
@@ -77,18 +89,18 @@ Từ đây, PBVN Repository và Forked Repository sẽ được gọi lần lư�
     9.1. Trong trường hợp reviewer có yêu cầu sửa chữa, hãy thực hiện các bước 3. 〜 6.。
 
     9.2.1 merge bằng "git rebase"
-        * push -f (push đè hoàn toàn lên code cũ) đối với remote branch làm task -f làm thay đổi history code (rewrite)。
-        * $ git push origin task/1234 -f
+        ```sh
+            * push -f (push đè hoàn toàn lên code cũ) đối với remote branch làm task -f làm thay đổi history code (rewrite)。
+            * $ git push origin task/1234 -f
+        ```
     9.2.1 merge bằng "git merge"
-            $ git push origin task/1234
+            ```sh 
+                $ git push origin task/1234
+            ```
     9.3 Tiếp tục gửi lại URL cho reviewer để tiến hành việc review code。
 
 10. Nếu reviewer đồng ý với pull-request, sẽ thực hiện việc merge pull-request。
 11. Quay trở lại 1。
-
-
-
-
 
 
 ### Khi xảy ra conflict trong quá trình merge
@@ -150,17 +162,19 @@ To check out the original branch and stop rebasing, run "git rebase --abort".
     ```
 
 ### một số lệnh git cơ bản nên tham khảo
-$ git clone
-$ git diff
-$ git commit --am
-$ git checkout
-$ git checkout -b
-$ git fetch
-$ git show
-$ git reset
-$ git remote
-$ git revert
-$ git stash
-$ git pop
-$ git apply
-$ git log
+```sh
+$ git clone  
+$ git diff  
+$ git commit --am  
+$ git checkout  
+$ git checkout -b  
+$ git fetch  
+$ git show  
+$ git reset  
+$ git remote  
+$ git revert  
+$ git stash  
+$ git pop  
+$ git apply  
+$ git log  
+```
