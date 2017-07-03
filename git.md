@@ -28,7 +28,7 @@ Flow tham khảo: [Nguồn](http://nvie.com/posts/a-successful-git-branching-mod
     || Nếu được thao tác trực tiếp trên Repository thì origin ~ upstream
 ### Quy trình
 
-Từ đây, PBVN Repository và Forked Repository sẽ được gọi lần lượt là `upstream` và `origin`。
+Từ đây, PBVN Repository và Forked Repository sẽ được gọi lần lượt là `upstream` và `origin`  
      ### Lưu ý:
         Nếu được thao tác trực tiếp trên Repository thì origin ~ upstream
 1. Đồng bộ hóa branch master tại local với upstream。
